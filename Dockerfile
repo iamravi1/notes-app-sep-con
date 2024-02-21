@@ -1,31 +1,20 @@
-# Dockerfile for NotesProject
+# Use an official Node.js runtime as the base image
+FROM node:14
 
-# Set base image with Node.js version 14
-FROM node:14.16.0-alpine3.13
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Set working directory
-WORKDIR /app
-
-# Copy package.json and package-lock.json for frontend
-COPY frontend/package*.json ./frontend/
-
-# Install frontend dependencies
-RUN cd frontend && npm install
-
-# Copy frontend source code
-COPY frontend/ ./frontend/
-
-# Copy package.json and package-lock.json for backend
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install backend dependencies
+# Install Node.js dependencies
 RUN npm install
 
-# Copy backend source code
-COPY backend/ ./backend/
+# Copy the application code into the container
+COPY . .
 
-# Expose ports 3000 and 5000
-EXPOSE 3000 5000
+# Expose the port your app runs on
+EXPOSE 3000
 
-# Set command to start the application
+# Define the start command to run your application
 CMD ["npm", "run", "dev"]
