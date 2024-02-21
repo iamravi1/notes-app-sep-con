@@ -21,7 +21,7 @@ services:
     container_name: frontend
     restart: unless-stopped
     ports:
-      - '3000:3000' 
+      - '3001:3000' 
     networks:
       - my-network
 
@@ -67,7 +67,7 @@ services:
     image: grafana/grafana
     container_name: grafana
     ports:
-      - 3000:3000
+      - '3000:3000'
     restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=admin
@@ -96,7 +96,7 @@ services:
     container_name: notes-app
     ports:
       - '4000:3000'
-      - '5000:5000'
+      - '5001:5000'
     restart: always
     networks:
       - my-network
