@@ -1,18 +1,25 @@
 version: '3.8'
 
 services:
-  notes-app:
+  backend:
     build:
       context: .
-    container_name: notes-app
+    container_name: backend
     restart: unless-stopped
     ports:
       - '5000:5000'
-      - '3000:3000'
     depends_on:
       - mongo
     environment:
       MONGO_URI: 'mongodb://mongo:27017/notes_db'  # Connection string to MongoDB
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
 
   mongo:
     image: mongo:latest

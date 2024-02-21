@@ -10,12 +10,11 @@ COPY package*.json ./
 # Install Node.js dependencies
 RUN npm install
 
-# Copy the rest of the backend code into the container
+# Copy the rest of the frontend code into the container
 COPY . .
 
-# Expose the port your backend app runs on
-EXPOSE 5000
+# Expose the port your frontend app runs on
+EXPOSE 3000
 
-# Define the start command to run your backend app
-CMD ["npm", "run", "dev"]
-
+# Define the start command to run your frontend app
+CMD ["npm", "start"]
