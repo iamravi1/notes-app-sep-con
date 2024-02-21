@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+    container_name: backend
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: 'mongodb://mongo:27017/notes_db'  # Connection string to MongoDB
+    networks:
+      - my-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000' 
+    networks:
+      - my-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - my-network
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    restart: always
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    networks:
+      - my-network
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: node-exporter
+    ports:
+      - '9100:9100'
+    restart: always
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - my-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - my-network
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - '8080:8080'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: always
+    networks:
+      - my-network
+
+  notes-app:
+    image: iamravi1/notesproject
+    container_name: notes-app
+    ports:
+      - '4000:3000'
+      - '5000:5000'
+    restart: always
+    networks:
+      - my-network
+
+volumes:
+  mongo-data:
+  prom_data:
+
+networks:
+  my-network:
